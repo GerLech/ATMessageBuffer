@@ -49,6 +49,8 @@
 #define ATUNIT_LUX 5         //illuminance in lx
 #define ATUNIT_METER 6       //length in m
 
+//device capabilities
+
 
 typedef //structure of a data packet
 struct ATDATAPACKET {
@@ -62,6 +64,7 @@ typedef //structure of a message packet
 struct ATMSGPACKET {
   uint8_t id[6];    //id of the remote device typical its MAC address
   uint8_t packets;  //number of packets in the message
+  uint8_t devicebits; //bits to control device capabilities
 };
 
 typedef

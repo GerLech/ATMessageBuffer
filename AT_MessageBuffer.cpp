@@ -29,6 +29,7 @@ ATMESSAGEHEADER AT_MessageBuffer::getHeader() {
 }
 void AT_MessageBuffer::clear(){
   _messageBuffer.packets = 0;
+  _messageBuffer.devicebits = 0;
 }
 
 void AT_MessageBuffer::addFloat(float value, uint8_t channel, uint8_t unit = 0) {
@@ -61,7 +62,7 @@ void AT_MessageBuffer::addCelsius(float value, uint8_t channel) {
 
 boolean AT_MessageBuffer::fillBuffer(uint8_t * buffer, uint8_t * size){
   uint8_t max_size = * size;
-  uint8_t sz = sizeof(_messageBuffer.id) + sizeof(_messageBuffer.packets);
+  uint8_t sz = sizeof(_messageBuffer.id) + sizeof(_messageBuffer.packets) + sizeof(_messageBuffer.devicebits);
   *size = sz;
   if (sz <= max_size) memcpy(buffer, & _messageBuffer, sz); else return false;
   uint8_t szp = sizeof(ATDATAPACKET);
@@ -74,7 +75,7 @@ boolean AT_MessageBuffer::fillBuffer(uint8_t * buffer, uint8_t * size){
 }
 
 void AT_MessageBuffer::readBuffer(const uint8_t * buffer){
-  uint8_t sz = sizeof(_messageBuffer.id) + sizeof(_messageBuffer.packets);
+  uint8_t sz = sizeof(_messageBuffer.id) + sizeof(_messageBuffer.packets) + sizeof(_messageBuffer.devicebits);
   memcpy(& _messageBuffer, buffer, sz);
   if (_messageBuffer.packets > ATMAXDEVCHANNELS) _messageBuffer.packets = ATMAXDEVCHANNELS;
   for (uint8_t i = 0; i<_messageBuffer.packets; i++) {
