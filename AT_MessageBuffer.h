@@ -50,7 +50,11 @@
 #define ATUNIT_METER 6       //length in m
 
 //device capabilities
-
+#define ATDEV_ISPASSIVE 1    //bit 0 if 0 the device is active and sends
+                            //data packets at fix intervall
+#define ATDEV_ACCEPTINTERVALL 2 // bit 1 if this bit is set control center can modify intervall
+#define ATDEV_USECHECKSUM 4  //bit 2 if this bit is set datapackets have a checksum
+#define ATDEV_ENCRYPTDATA 8  //bit 2 if set data encryption will be used
 
 typedef //structure of a data packet
 struct ATDATAPACKET {
@@ -64,7 +68,7 @@ typedef //structure of a message packet
 struct ATMSGPACKET {
   uint8_t id[6];    //id of the remote device typical its MAC address
   uint8_t packets;  //number of packets in the message
-  uint8_t devicebits; //bits to control device capabilities
+  uint16_t devicebits; //bits to control device capabilities
 };
 
 typedef
