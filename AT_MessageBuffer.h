@@ -74,6 +74,7 @@ struct ATMSGPACKET {
 typedef
 struct ATMESSAGEHEADER {
   uint8_t id[6];
+  uint16_t devicebits;
 };
 
 //returns the value from data packet as a float
@@ -93,9 +94,13 @@ public:
   //Clear messagebuffer
   void clear();
   //add a float to the messagebuffer
-  void addFloat(float value, uint8_t channel, uint8_t unit);
+  void addFloat(float value, uint8_t channel, uint8_t unit, uint8_t type);
+  void addFloatIn(float value, uint8_t channel, uint8_t unit);
+  void addFloatOut(float value, uint8_t channel, uint8_t unit);
   //add a long integer to the messagebuffer
-  void addLong(long value, uint8_t channel, uint8_t unit);
+  void addLong(long value, uint8_t channel, uint8_t unit, uint8_t type);
+  void addLongIn(long value, uint8_t channel, uint8_t unit);
+  void addLongOut(long value, uint8_t channel, uint8_t unit);
   //add temperature as °C to the message buffer
   void addCelsius(float value, uint8_t channel);
   //fill a memory block with data from messagebuffer
@@ -113,6 +118,9 @@ public:
   uint8_t getPackets();
   //return a pointer on a data packet in the messagebuffer
   ATDATAPACKET getData(uint8_t index);
+  //return the checksum over a memory buffer
+  uint32_t calculateCRC32(const uint8_t *data, size_t length);
+
 
 
 private:

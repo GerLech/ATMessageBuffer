@@ -25,6 +25,7 @@ void AT_MessageBuffer::setId(String id){
 ATMESSAGEHEADER AT_MessageBuffer::getHeader() {
   ATMESSAGEHEADER result;
   for (uint8_t i = 0; i<6; i++) result.id[i] = _messageBuffer.id[i];
+  result.devicebits = _messageBuffer.devicebits;
   return result;
 }
 void AT_MessageBuffer::clear(){
@@ -32,11 +33,11 @@ void AT_MessageBuffer::clear(){
   _messageBuffer.devicebits = 0;
 }
 
-void AT_MessageBuffer::addFloat(float value, uint8_t channel, uint8_t unit = 0) {
+void AT_MessageBuffer::addLong(long value, uint8_t channel, uint8_t unit, uint8_t type) {
   if (_messageBuffer.packets < ATMAXDEVCHANNELS){
     uint8_t index = _messageBuffer.packets;
     _dataPackets[index].channel = channel;
-    _dataPackets[index].type = ATTYPE_ANALOGOUT;
+    _dataPackets[index].type = type;
     _dataPackets[index].unit = unit;
     Serial.println(value);
     memcpy(&_dataPackets[index].value[0],&value,4);
@@ -44,20 +45,37 @@ void AT_MessageBuffer::addFloat(float value, uint8_t channel, uint8_t unit = 0) 
   }
 }
 
-void AT_MessageBuffer::addLong(long value, uint8_t channel, uint8_t unit = 0) {
+
+void AT_MessageBuffer::addLongIn(long value, uint8_t channel, uint8_t unit) {
+  addLong(value,channel,unit,ATTYPE_DIGITALIN);
+}
+
+void AT_MessageBuffer::addLongOut(long value, uint8_t channel, uint8_t unit) {
+  addLong(value,channel,unit,ATTYPE_DIGITALOUT);
+}
+
+void AT_MessageBuffer::addFloat(float value, uint8_t channel, uint8_t unit, uint8_t type) {
   if (_messageBuffer.packets < ATMAXDEVCHANNELS){
     uint8_t index = _messageBuffer.packets;
     _dataPackets[index].channel = channel;
-    _dataPackets[index].type = ATTYPE_ANALOGOUT;
+    _dataPackets[index].type = type;
     _dataPackets[index].unit = unit;
     Serial.println(value);
     memcpy(&_dataPackets[index].value[0],&value,4);
     _messageBuffer.packets++;
   }
+}
+
+void AT_MessageBuffer::addFloatIn(float value, uint8_t channel, uint8_t unit) {
+  addFloat(value, channel, unit, ATTYPE_ANALOGIN);
+}
+
+void AT_MessageBuffer::addFloatOut(float value, uint8_t channel, uint8_t unit) {
+  addFloat(value, channel, unit, ATTYPE_ANALOGOUT);
 }
 
 void AT_MessageBuffer::addCelsius(float value, uint8_t channel) {
-  addFloat(value, channel, ATUNIT_CELSIUS);
+  addFloatIn(value, channel, ATUNIT_CELSIUS);
 }
 
 boolean AT_MessageBuffer::fillBuffer(uint8_t * buffer, uint8_t * size){
@@ -104,4 +122,22 @@ long AT_GetLong(uint8_t * data){
   long value;
   memcpy(&value,data,4);
   return value;
+}
+
+uint32_t AT_MessageBuffer::calculateCRC32(const uint8_t *data, size_t length) {
+  uint32_t crc = 0xffffffff;
+  while (length--) {
+    uint8_t c = *data++;
+    for (uint32_t i = 0x80; i > 0; i >>= 1) {
+      bool bit = crc & 0x80000000;
+      if (c & i) {
+        bit = !bit;
+      }
+      crc <<= 1;
+      if (bit) {
+        crc ^= 0x04c11db7;
+      }
+    }
+  }
+  return crc;
 }
