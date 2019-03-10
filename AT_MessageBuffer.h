@@ -39,6 +39,9 @@
 #define ATTYPE_ANALOGIN 1  //float value from sensor
 #define ATTYPE_DIGITALOUT 2  //integer value to sensor
 #define ATTYPE_ANALOGOUT 3 //float value to sensor
+#define ATTYPE_SWITCHIN 4  //integer value to sensor
+#define ATTYPE_SWITCHOUT 5 //float value to sensor
+
 
 //units to classify values
 #define ATUNIT_NONE 0        //no unit
@@ -81,6 +84,10 @@ struct ATMESSAGEHEADER {
 float AT_GetFloat(uint8_t * data);
 //returns the value from a data packet as a long integer
 long AT_GetLong(uint8_t * data);
+//return the checksum over a memory buffer
+uint32_t AT_CalculateCRC32(const uint8_t *data, size_t length);
+//return unit as a string;
+String AT_getUnitString(uint8_t unit);
 
 class AT_MessageBuffer {
 public:
@@ -101,6 +108,10 @@ public:
   void addLong(long value, uint8_t channel, uint8_t unit, uint8_t type);
   void addLongIn(long value, uint8_t channel, uint8_t unit);
   void addLongOut(long value, uint8_t channel, uint8_t unit);
+  //add a boolean value without unit
+  void addSwitch(boolean value, uint8_t channel, uint8_t type);
+  void addSwitchIn(boolean value, uint8_t channel);
+  void addSwitchOut(boolean value, uint8_t channel);
   //add temperature as °C to the message buffer
   void addCelsius(float value, uint8_t channel);
   //fill a memory block with data from messagebuffer
@@ -118,8 +129,10 @@ public:
   uint8_t getPackets();
   //return a pointer on a data packet in the messagebuffer
   ATDATAPACKET getData(uint8_t index);
-  //return the checksum over a memory buffer
-  uint32_t calculateCRC32(const uint8_t *data, size_t length);
+  //get ID as string
+  String getId();
+  //get the devicebits
+  uint16_t getDeviceBits();
 
 
 

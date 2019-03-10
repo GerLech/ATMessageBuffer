@@ -60,7 +60,6 @@ void AT_MessageBuffer::addFloat(float value, uint8_t channel, uint8_t unit, uint
     _dataPackets[index].channel = channel;
     _dataPackets[index].type = type;
     _dataPackets[index].unit = unit;
-    Serial.println(value);
     memcpy(&_dataPackets[index].value[0],&value,4);
     _messageBuffer.packets++;
   }
@@ -73,6 +72,24 @@ void AT_MessageBuffer::addFloatIn(float value, uint8_t channel, uint8_t unit) {
 void AT_MessageBuffer::addFloatOut(float value, uint8_t channel, uint8_t unit) {
   addFloat(value, channel, unit, ATTYPE_ANALOGOUT);
 }
+
+void AT_MessageBuffer::addSwitch(boolean value, uint8_t channel, uint8_t type){
+  if (_messageBuffer.packets < ATMAXDEVCHANNELS){
+    uint8_t index = _messageBuffer.packets;
+    _dataPackets[index].channel = channel;
+    _dataPackets[index].type = type;
+    _dataPackets[index].unit = ATUNIT_NONE;
+    _dataPackets[index].value[0] = (value)?1:0;
+    _messageBuffer.packets++;
+  }
+}
+void AT_MessageBuffer::addSwitchIn(boolean value, uint8_t channel){
+  addSwitch(value,channel,ATTYPE_SWITCHIN);
+}
+void AT_MessageBuffer::addSwitchOut(boolean value, uint8_t channel){
+  addSwitch(value,channel,ATTYPE_SWITCHOUT);
+}
+
 
 void AT_MessageBuffer::addCelsius(float value, uint8_t channel) {
   addFloatIn(value, channel, ATUNIT_CELSIUS);
@@ -112,6 +129,10 @@ ATDATAPACKET AT_MessageBuffer::getData(uint8_t index) {
   }
 }
 
+uint16_t AT_MessageBuffer::getDeviceBits(){
+  return _messageBuffer.devicebits;
+}
+
 float AT_GetFloat(uint8_t * data) {
   float value;
   memcpy(&value,data,4);
@@ -124,7 +145,7 @@ long AT_GetLong(uint8_t * data){
   return value;
 }
 
-uint32_t AT_MessageBuffer::calculateCRC32(const uint8_t *data, size_t length) {
+uint32_t AT_CalculateCRC32(const uint8_t *data, size_t length) {
   uint32_t crc = 0xffffffff;
   while (length--) {
     uint8_t c = *data++;
@@ -140,4 +161,29 @@ uint32_t AT_MessageBuffer::calculateCRC32(const uint8_t *data, size_t length) {
     }
   }
   return crc;
+}
+
+String AT_MessageBuffer::getId(){
+  String stid;
+  char tmp[4];
+  sprintf(tmp,"%02x",_messageBuffer.id[0]);
+  stid=tmp;
+  for (uint8_t j = 1; j<6; j++) {
+    sprintf(tmp,":%02x",_messageBuffer.id[j]);
+    stid = stid += tmp ;
+  }
+  return stid;
+}
+
+String AT_getUnitString(uint8_t unit) {
+  String result = "";
+  switch (unit) {
+    case ATUNIT_LUX: result = "lx"; break;
+    case ATUNIT_CELSIUS: result = "°C"; break;
+    case ATUNIT_METER: result = "m"; break;
+    case ATUNIT_PASCAL: result = "Pa"; break;
+    case ATUNIT_PERCENT: result = "%"; break;
+    case ATUNIT_FAHRENHEIT: result = "°F"; break;
+  }
+  return result;
 }
