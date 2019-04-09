@@ -18,7 +18,8 @@ void AT_MessageBuffer::setId(int id[6]) {
 
 void AT_MessageBuffer::setId(String id){
   int imac[6];
-  sscanf(id.c_str(), "%x:%x:%x:%x:%x:%x%c",  &imac[0], &imac[1], &imac[2], &imac[3], &imac[4], &imac[5] );
+  char x;
+  sscanf(id.c_str(), "%x:%x:%x:%x:%x:%x%c",  &imac[0], &imac[1], &imac[2], &imac[3], &imac[4], &imac[5], &x );
   for (uint8_t i = 0; i<6; i++) _messageBuffer.id[i]=imac[i];
 }
 
@@ -127,6 +128,7 @@ ATDATAPACKET AT_MessageBuffer::getData(uint8_t index) {
   if (index < _messageBuffer.packets) {
     return _dataPackets[index];
   }
+  return _dataPackets[0];
 }
 
 uint16_t AT_MessageBuffer::getDeviceBits(){

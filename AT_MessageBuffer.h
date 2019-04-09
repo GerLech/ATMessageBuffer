@@ -60,25 +60,25 @@
 #define ATDEV_ENCRYPTDATA 8  //bit 2 if set data encryption will be used
 
 typedef //structure of a data packet
-struct ATDATAPACKET {
+struct  {
   uint8_t channel; //channel as an identification
   uint8_t type;    //type of the packet
   uint8_t unit;    //unit of the packet
   uint8_t value[4];//four data bytes to hold a long integer or a float
-};
+} ATDATAPACKET;
 
 typedef //structure of a message packet
-struct ATMSGPACKET {
+struct  {
   uint8_t id[6];    //id of the remote device typical its MAC address
   uint8_t packets;  //number of packets in the message
   uint16_t devicebits; //bits to control device capabilities
-};
+} ATMSGPACKET;
 
 typedef
-struct ATMESSAGEHEADER {
+struct  {
   uint8_t id[6];
   uint16_t devicebits;
-};
+} ATMESSAGEHEADER;
 
 //returns the value from data packet as a float
 float AT_GetFloat(uint8_t * data);
