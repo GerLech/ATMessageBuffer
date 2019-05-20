@@ -95,6 +95,29 @@ void AT_MessageBuffer::addSwitchOut(boolean value, uint8_t channel){
 void AT_MessageBuffer::addCelsius(float value, uint8_t channel) {
   addFloatIn(value, channel, ATUNIT_CELSIUS);
 }
+void AT_MessageBuffer::addFahrenheit(float value, uint8_t channel) {
+  addFloatIn(value, channel, ATUNIT_FAHRENHEIT);
+}
+//add percent value for example humidity to the message buffer
+void AT_MessageBuffer::addPercent(float value, uint8_t channel){
+  addFloatIn(value, channel, ATUNIT_PERCENT);
+}
+//add hight in m to the message buffer
+void AT_MessageBuffer::addMeter(float value, uint8_t channel){
+  addFloatIn(value, channel, ATUNIT_METER);
+}
+//add pressure in hPa to the message buffer
+void AT_MessageBuffer::addHektoPascal(float value, uint8_t channel){
+  addFloatIn(value, channel, ATUNIT_HPASCAL);
+}
+//add pressure in Pa to the message buffer
+void AT_MessageBuffer::addPascal(float value, uint8_t channel){
+  addFloatIn(value, channel, ATUNIT_PASCAL);
+}
+//add pressure in hPa to the message buffer
+void AT_MessageBuffer::addLux(float value, uint8_t channel){
+  addFloatIn(value, channel, ATUNIT_LUX);
+}
 
 boolean AT_MessageBuffer::fillBuffer(uint8_t * buffer, uint8_t * size){
   uint8_t max_size = * size;
@@ -186,6 +209,7 @@ String AT_getUnitString(uint8_t unit) {
     case ATUNIT_PASCAL: result = "Pa"; break;
     case ATUNIT_PERCENT: result = "%"; break;
     case ATUNIT_FAHRENHEIT: result = "°F"; break;
+    case ATUNIT_HPASCAL: result = "hPa"; break;
   }
   return result;
 }

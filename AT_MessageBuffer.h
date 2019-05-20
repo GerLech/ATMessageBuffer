@@ -51,6 +51,7 @@
 #define ATUNIT_PASCAL 4      //pressure in Pa
 #define ATUNIT_LUX 5         //illuminance in lx
 #define ATUNIT_METER 6       //length in m
+#define ATUNIT_HPASCAL 7     //pressure in hPa
 
 //device capabilities
 #define ATDEV_ISPASSIVE 1    //bit 0 if 0 the device is active and sends
@@ -114,6 +115,18 @@ public:
   void addSwitchOut(boolean value, uint8_t channel);
   //add temperature as °C to the message buffer
   void addCelsius(float value, uint8_t channel);
+  //add temperature as °F to the message buffer
+  void addFahrenheit(float value, uint8_t channel);
+  //add percent value for example humidity to the message buffer
+  void addPercent(float value, uint8_t channel);
+  //add hight in m to the message buffer
+  void addMeter(float value, uint8_t channel);
+  //add pressure in hPa to the message buffer
+  void addPascal(float value, uint8_t channel);
+  //add pressure in hPa to the message buffer
+  void addHektoPascal(float value, uint8_t channel);
+  //add illuminance in lx
+  void addLux(float value, uint8_t channel);
   //fill a memory block with data from messagebuffer
   //the parameter buffer points to the memory block
   //the parameter size points to an integer with the size of the memory block
